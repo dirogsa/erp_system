@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import init_db
@@ -11,11 +12,16 @@ app = FastAPI(title="ERP System API", version="1.0.0")
 
 app.add_exception_handler(BusinessException, business_exception_handler)
 
-# Configuración de CORS
+# Configuración de CORS - Permite localhost y URL en producción
 origins = [
-    "http://localhost:5173", # Frontend React (Vite)
-    "http://localhost:3000", # Frontend React (Create React App)
+    "http://localhost:5173",  # Frontend React (Vite) - Desarrollo
+    "http://localhost:3000",  # Frontend React (CRA) - Desarrollo
 ]
+
+# Agregar URL de producción desde variable de entorno
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    origins.append(frontend_url)
 
 app.add_middleware(
     CORSMiddleware,
