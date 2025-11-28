@@ -17,7 +17,7 @@ async def init_db():
         return
 
     client = AsyncIOMotorClient(mongo_uri)
-    db_name = os.getenv("MONGO_DB_NAME", "system_db")
+    db_name = os.getenv("MONGO_DB_NAME", "erp_db")
     
     # Initialize Beanie with the database and document models
     await init_beanie(
