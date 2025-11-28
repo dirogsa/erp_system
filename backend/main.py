@@ -1,0 +1,49 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.database import init_db
+
+from app.routes import inventory, purchasing, sales
+
+from app.exceptions.business_exceptions import BusinessException
+from app.exceptions.handlers import business_exception_handler
+
+app = FastAPI(title="ERP System API", version="1.0.0")
+
+app.add_exception_handler(BusinessException, business_exception_handler)
+
+# Configuración de CORS
+origins = [
+    "http://localhost:5173", # Frontend React (Vite)
+    "http://localhost:3000", # Frontend React (Create React App)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(inventory.router)
+app.include_router(purchasing.router)
+app.include_router(sales.router)
+
+@app.on_event("startup")
+async def start_db():
+    await init_db()
+    
+    # Initialize default warehouses after Beanie is ready
+    from app.models.inventory import Warehouse
+    
+    # Principal (San Luis)
+    if not await Warehouse.find_one({"code": "SL01"}):
+        await Warehouse(name="Almacén San Luis (Principal)", code="SL01", address="Av. San Luis 123", is_main=True).insert()
+    
+    # Secundario (Ate)
+    if not await Warehouse.find_one({"code": "ATE01"}):
+        await Warehouse(name="Almacén Ate", code="ATE01", address="Carretera Central Km 5", is_main=False).insert()
+
+@app.get("/")
+async def root():
+    return {"message": "ERP System API is running"}
