@@ -10,6 +10,8 @@ import InvoiceDetailModal from '../components/features/sales/InvoiceDetailModal'
 import InvoiceModal from '../components/features/sales/InvoiceModal';
 import PaymentModal from '../components/features/sales/PaymentModal';
 import DispatchModal from '../components/features/sales/DispatchModal';
+import SalesOrderReceipt from '../components/features/sales/SalesOrderReceipt';
+import SalesInvoiceReceipt from '../components/features/sales/SalesInvoiceReceipt';
 import Pagination from '../components/common/Table/Pagination';
 import { useSalesOrders } from '../hooks/useSalesOrders';
 import { useSalesInvoices } from '../hooks/useSalesInvoices';
@@ -31,6 +33,8 @@ const Sales = () => {
     const [showInvoiceDetailModal, setShowInvoiceDetailModal] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [showDispatchModal, setShowDispatchModal] = useState(false);
+    const [showOrderReceipt, setShowOrderReceipt] = useState(false);
+    const [showInvoiceReceipt, setShowInvoiceReceipt] = useState(false);
 
     // Hooks
     const {
@@ -166,7 +170,7 @@ const Sales = () => {
                         loading={ordersLoading}
                         onView={(order) => {
                             setSelectedOrder(order);
-                            setShowOrderModal(true);
+                            setShowOrderReceipt(true);
                         }}
                         onCreateInvoice={(order) => {
                             setSelectedOrder(order);
@@ -196,7 +200,7 @@ const Sales = () => {
                     loading={invoicesLoading}
                     onView={(invoice) => {
                         setSelectedInvoice(invoice);
-                        setShowInvoiceDetailModal(true);
+                        setShowInvoiceReceipt(true);
                     }}
                     onRegisterPayment={(invoice) => {
                         setSelectedInvoice(invoice);
@@ -244,6 +248,19 @@ const Sales = () => {
                 loading={invoicesLoading}
                 onClose={() => setShowDispatchModal(false)}
                 onSubmit={handleDispatch}
+            />
+
+            {/* Receipt Modals */}
+            <SalesOrderReceipt
+                visible={showOrderReceipt}
+                order={selectedOrder}
+                onClose={() => setShowOrderReceipt(false)}
+            />
+
+            <SalesInvoiceReceipt
+                visible={showInvoiceReceipt}
+                invoice={selectedInvoice}
+                onClose={() => setShowInvoiceReceipt(false)}
             />
         </div>
     );

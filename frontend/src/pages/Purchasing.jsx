@@ -6,6 +6,8 @@ import PurchaseInvoicesTable from '../components/features/purchasing/PurchaseInv
 import InvoiceModal from '../components/features/purchasing/InvoiceModal';
 import PaymentModal from '../components/features/purchasing/PaymentModal';
 import ReceptionModal from '../components/features/purchasing/ReceptionModal';
+import PurchaseOrderReceipt from '../components/features/purchasing/PurchaseOrderReceipt';
+import PurchaseInvoiceReceipt from '../components/features/purchasing/PurchaseInvoiceReceipt';
 import Pagination from '../components/common/Table/Pagination';
 import { usePurchaseOrders } from '../hooks/usePurchaseOrders';
 import { usePurchaseInvoices } from '../hooks/usePurchaseInvoices';
@@ -24,6 +26,8 @@ const Purchasing = () => {
     const [showInvoiceModal, setShowInvoiceModal] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [showReceptionModal, setShowReceptionModal] = useState(false);
+    const [showOrderReceipt, setShowOrderReceipt] = useState(false);
+    const [showInvoiceReceipt, setShowInvoiceReceipt] = useState(false);
 
     // Hooks
     const {
@@ -131,7 +135,8 @@ const Purchasing = () => {
                         orders={orders}
                         loading={ordersLoading}
                         onView={(order) => {
-                            console.log('Ver orden', order);
+                            setSelectedOrder(order);
+                            setShowOrderReceipt(true);
                         }}
                         onCreateInvoice={(order) => {
                             setSelectedOrder(order);
@@ -155,7 +160,8 @@ const Purchasing = () => {
                     invoices={invoices}
                     loading={invoicesLoading}
                     onView={(invoice) => {
-                        console.log('Ver factura', invoice);
+                        setSelectedInvoice(invoice);
+                        setShowInvoiceReceipt(true);
                     }}
                     onRegisterPayment={(invoice) => {
                         setSelectedInvoice(invoice);
@@ -191,6 +197,19 @@ const Purchasing = () => {
                 loading={invoicesLoading}
                 onClose={() => setShowReceptionModal(false)}
                 onSubmit={handleReception}
+            />
+
+            {/* Receipt Modals */}
+            <PurchaseOrderReceipt
+                visible={showOrderReceipt}
+                order={selectedOrder}
+                onClose={() => setShowOrderReceipt(false)}
+            />
+
+            <PurchaseInvoiceReceipt
+                visible={showInvoiceReceipt}
+                invoice={selectedInvoice}
+                onClose={() => setShowInvoiceReceipt(false)}
             />
         </div>
     );
