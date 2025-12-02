@@ -13,7 +13,8 @@ export const usePurchaseInvoices = () => {
         setError(null);
         try {
             const response = await purchasingService.getInvoices();
-            setInvoices(response.data);
+            // Extract items from paginated response
+            setInvoices(response.data.items || []);
         } catch (err) {
             setError(err);
             showNotification('Error al cargar facturas de compra', 'error');

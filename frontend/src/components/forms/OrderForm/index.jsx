@@ -30,7 +30,22 @@ const OrderForm = ({
     // Actualizar si cambia initialData (ej. modo edición)
     useEffect(() => {
         if (initialData) {
-            setFormData(prev => ({ ...prev, ...initialData }));
+            setFormData(prev => ({
+                ...prev,
+                ...initialData,
+                // Reconstruct customer object if it doesn't exist but we have flat fields
+                customer: initialData.customer || {
+                    name: initialData.customer_name || '',
+                    ruc: initialData.customer_ruc || '',
+                    address: initialData.delivery_address || '',
+                    branches: [] // We might not have branches in order data, that's fine for read-only
+                },
+                // Calculate subtotal for items if missing (backend doesn't send it)
+                items: (initialData.items || []).map(item => ({
+                    ...item,
+                    subtotal: item.subtotal !== undefined ? item.subtotal : (item.quantity * item.unit_price)
+                }))
+            }));
         }
     }, [initialData]);
 

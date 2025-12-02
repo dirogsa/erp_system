@@ -6,6 +6,7 @@ import OrderForm from '../components/forms/OrderForm';
 import OrdersTable from '../components/features/sales/OrdersTable';
 import InvoicesTable from '../components/features/sales/InvoicesTable';
 import OrderDetailModal from '../components/features/sales/OrderDetailModal';
+import InvoiceDetailModal from '../components/features/sales/InvoiceDetailModal';
 import InvoiceModal from '../components/features/sales/InvoiceModal';
 import PaymentModal from '../components/features/sales/PaymentModal';
 import DispatchModal from '../components/features/sales/DispatchModal';
@@ -27,6 +28,7 @@ const Sales = () => {
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+    const [showInvoiceDetailModal, setShowInvoiceDetailModal] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [showDispatchModal, setShowDispatchModal] = useState(false);
 
@@ -193,7 +195,8 @@ const Sales = () => {
                     invoices={invoices}
                     loading={invoicesLoading}
                     onView={(invoice) => {
-                        console.log('Ver factura', invoice);
+                        setSelectedInvoice(invoice);
+                        setShowInvoiceDetailModal(true);
                     }}
                     onRegisterPayment={(invoice) => {
                         setSelectedInvoice(invoice);
@@ -219,6 +222,12 @@ const Sales = () => {
                 loading={invoicesLoading}
                 onClose={() => setShowInvoiceModal(false)}
                 onSubmit={handleCreateInvoice}
+            />
+
+            <InvoiceDetailModal
+                visible={showInvoiceDetailModal}
+                invoice={selectedInvoice}
+                onClose={() => setShowInvoiceDetailModal(false)}
             />
 
             <PaymentModal

@@ -13,7 +13,8 @@ export const useSalesInvoices = () => {
         setError(null);
         try {
             const response = await salesService.getInvoices();
-            setInvoices(response.data);
+            // Extract items from paginated response
+            setInvoices(response.data.items || []);
         } catch (err) {
             setError(err);
             showNotification('Error al cargar facturas de venta', 'error');
@@ -31,7 +32,20 @@ export const useSalesInvoices = () => {
             showNotification('Factura registrada exitosamente', 'success');
             return response.data;
         } catch (err) {
-            const errorMessage = err.response?.data?.detail || 'Error al registrar factura';
+            // Handle validation errors from FastAPI (422 errors)
+            let errorMessage = 'Error al registrar factura';
+
+            if (err.response?.data?.detail) {
+                const detail = err.response.data.detail;
+
+                // FastAPI validation errors come as an array
+                if (Array.isArray(detail)) {
+                    errorMessage = detail.map(e => `${e.loc.join('.')}: ${e.msg}`).join(', ');
+                } else if (typeof detail === 'string') {
+                    errorMessage = detail;
+                }
+            }
+
             showNotification(errorMessage, 'error');
             throw err;
         } finally {

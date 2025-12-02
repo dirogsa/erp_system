@@ -44,22 +44,15 @@ const InvoiceForm = ({
             // No bloqueamos, solo advertimos
         }
 
+        // Build payload matching backend InvoiceCreation schema
         const payload = {
-            ...formData,
-            order_id: order._id,
-            total_amount: order.total_amount,
-            items: order.items,
+            order_number: order.order_number,  // Send order_number, not order_id
+            invoice_number: formData.invoice_number,
+            invoice_date: formData.invoice_date,
+            payment_status: formData.payment_status,
+            amount_paid: formData.amount_paid,
+            payment_date: formData.payment_date
         };
-
-        if (isPurchase) {
-            payload.supplier_ruc = entityRuc;
-            payload.supplier_name = entityName;
-        } else {
-            payload.customer_ruc = entityRuc;
-            payload.customer_name = entityName;
-            payload.delivery_address = order.delivery_address;
-            payload.delivery_branch_name = order.delivery_branch_name;
-        }
 
         onSubmit(payload);
     };
