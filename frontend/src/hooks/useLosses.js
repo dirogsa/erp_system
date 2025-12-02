@@ -26,11 +26,26 @@ export const useLosses = () => {
     const createLoss = useCallback(async (lossData) => {
         setLoading(true);
         try {
-            await inventoryService.registerLoss(lossData);
+            // If it's an entry (Ingreso), we send a negative quantity to registerLoss
+            // assuming the backend subtracts the quantity. So subtracting a negative = adding.
+            // If backend validates quantity > 0, this might fail.
+            // However, this is the best attempt to keep it in the "losses/movements" report.
+            const quantity = lossData.is_entry ? -Math.abs(lossData.quantity) : Math.abs(lossData.quantity);
+
+            const payload = {
+                ...lossData,
+                quantity: quantity
+            };
+
+            // Remove frontend-only flags
+            delete payload.is_entry;
+            delete payload.movement_type;
+
+            await inventoryService.registerLoss(payload);
             await fetchLosses();
-            showNotification('Merma registrada exitosamente', 'success');
+            showNotification(lossData.is_entry ? 'Ingreso registrado exitosamente' : 'Salida registrada exitosamente', 'success');
         } catch (err) {
-            const errorMessage = err.response?.data?.detail || 'Error al registrar merma';
+            const errorMessage = err.response?.data?.detail || 'Error al registrar movimiento';
             showNotification(errorMessage, 'error');
             throw err;
         } finally {

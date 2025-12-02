@@ -52,7 +52,7 @@ const Inventory = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
                     <h1 style={{ color: 'white', marginBottom: '0.5rem' }}>Gestión de Inventario</h1>
-                    <p style={{ color: '#94a3b8' }}>Control de productos, transferencias y mermas</p>
+                    <p style={{ color: '#94a3b8' }}>Control de productos, transferencias y ajustes</p>
                 </div>
                 {activeTab === 'products' && (
                     <Button onClick={() => {
@@ -106,7 +106,7 @@ const Inventory = () => {
                         fontWeight: '500'
                     }}
                 >
-                    ⚠️ Mermas
+                    ⚖️ Ajustes
                 </button>
             </div>
 
